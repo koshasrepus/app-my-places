@@ -1,9 +1,14 @@
 import telebot
-from app_my_places.settings import TELEGRAM_TOKEN
+from app_my_places.settings import TELEGRAM_TOKEN, DEBUG
 
 bot = telebot.TeleBot(TELEGRAM_TOKEN)
 
-bot.set_webhook(url='https://acf0c0c5c755.ngrok.io/telegram_bot_path')
+if DEBUG:
+    url = 'https://acf0c0c5c755.ngrok.io/telegram_bot_path'
+else:
+    url = 'https://app-my-places.herokuapp.com/telegram_bot_path'
+
+bot.set_webhook(url=url)
 
 @bot.message_handler(commands=['start'])
 def hand_start_messate(message):

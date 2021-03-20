@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
-
+import django_heroku
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -21,10 +21,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '^+8xdwk=i0a0&u9nhvbmjf#(%y(pj3xud@+&i1pzzh^vbrcxyu'
+SECRET_KEY = os.getenv('SECRET_KEY', '^+8xdwk=i0a0&u9nhvbmjf#(%y(pj3xud@+&i1pzzh^vbrcxyu')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = bool(os.getenv('DEBUG', True))
 
 #ALLOWED_HOSTS = []
 ALLOWED_HOSTS = ["*",]  # since Telegram uses a lot of IPs for webhooks
@@ -45,7 +45,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    #'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -124,6 +124,6 @@ STATIC_URL = '/static/'
 #-------> TELEGRAM
 TELEGRAM_TOKEN = '1505162116:AAFMJ7ED4hkTkR1kY42lNRhUUvc2MpBZhYY'
 
-
+django_heroku.settings(locals())
 
 

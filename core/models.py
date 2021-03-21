@@ -9,7 +9,7 @@ class User(models.Model):
 class Palaces(models.Model):
     """Места"""
     title = models.CharField(max_length=100)
-    place_lat = models.FloatField()
-    place_lon = models.FloatField()
+    place_lat = models.FloatField(default=None)
+    place_lon = models.FloatField(default=None)
     image = models.ImageField()
     user = models.ForeignKey('User', on_delete=models.CASCADE)

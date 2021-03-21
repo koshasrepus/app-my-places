@@ -8,6 +8,8 @@ class User(models.Model):
 
 class Palaces(models.Model):
     """Места"""
-    location = models
+    title = models.CharField()
+    place_lat = models.FloatField()
+    place_lon = models.FloatField()
     image = models.ImageField()
     user = models.ForeignKey('User', on_delete=models.CASCADE)

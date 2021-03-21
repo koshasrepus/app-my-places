@@ -48,7 +48,7 @@ def check_step_1(message):
     return check_step(message, 1)
 
 @bot.message_handler(func=check_step_1)
-def handle_step_add_title_place(message):
+def hand_step_add_title_place(message):
     user = get_user(message)
     Palaces.objects.create(title=message.text, user=user)
     user.step = 2
@@ -60,9 +60,10 @@ def check_step_2(message):
 
 @bot.message_handler(func=check_step_2)
 @bot.message_handler(content_types=['location'])
-def handle_step_add_location(message):
+def hand_step_add_location(message):
     user = get_user(message)
-    places = Palaces.objects.get(user=user, place_lat=None)
+    #places = Palaces.objects.get(user=user, place_lat=None)
+    places = Palaces.objects.filter(user=user, place_lat=None)[1]
     places.place_lat = message.location.latitude
     places.place_lon = message.location.longitude
     user.step = 3
@@ -74,7 +75,7 @@ def check_step_3(message):
 
 @bot.message_handler(func=check_step_3)
 @bot.message_handler(content_types=['photo'])
-def handle_ste_add_photo(message):
+def hand_ste_add_photo(message):
     user = get_user(message)
     user.step = 1
     user.save()
@@ -91,7 +92,7 @@ def hand_reset_message(message):
 
 
 @bot.message_handler(content_types=['location'])
-def handl_location(message):
+def hand_location(message):
     bot.send_message(chat_id=message.chat.id, text='command [location] is works')
 
 

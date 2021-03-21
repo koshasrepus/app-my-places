@@ -16,5 +16,6 @@ tornado==6.1
 tzlocal==2.1
 urllib3==1.26.4
 whitenoise==5.2.0
+ordereddict==1.1
 gunicorn==20.0.4
 django-heroku==0.3.1

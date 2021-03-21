@@ -1,5 +1,6 @@
 import telebot
 from app_my_places.settings import TELEGRAM_TOKEN, DEBUG
+from core.models import User, Palaces
 
 bot = telebot.TeleBot(TELEGRAM_TOKEN)
 
@@ -18,7 +19,20 @@ def hand_start_messate(message):
 
 @bot.message_handler(commands=['add'])
 def hand_start_messate(message):
-    bot.send_message(chat_id=message.chat.id, text='command [add] is works')
+    user = User.objects.filter(chat_id=message.chat.id)
+    if not user:
+        User.objects.create(chat_id=message.chat.id, step=1)
+        bot.send_message(chat_id=message.chat.id, text='Введите название для новго места')
+    else:
+        if user.step == 1:
+            bot.send_message(chat_id=message.chat.id, text='Отправьте локацию. Для этого нажмите Прикрепить > Геопозиция')
+            user.step = 2
+            user.save()
+        if user.step == 3:
+            bot.send_message(chat_id=message.chat.id, text='Отправьте локацию. Для этого нажмите Прикрепить > Геопозиция')
+            user.step = 1
+            user.save()
+
 
 @bot.message_handler(commands=['list'])
 def hand_list_message(message):

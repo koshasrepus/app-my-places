@@ -8,7 +8,7 @@ class User(models.Model):
 
 class Palaces(models.Model):
     """Места"""
-    title = models.CharField(max_length=100)
+    title = models.CharField(max_length=100, default=None)
     place_lat = models.FloatField(default=None)
     place_lon = models.FloatField(default=None)
     image = models.ImageField()

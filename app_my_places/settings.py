@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
-import django_heroku
+#import django_heroku
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -124,6 +124,6 @@ STATIC_URL = '/static/'
 #-------> TELEGRAM
 TELEGRAM_TOKEN = '1505162116:AAFMJ7ED4hkTkR1kY42lNRhUUvc2MpBZhYY'
 
-django_heroku.settings(locals())
+#django_heroku.settings(locals())
 
 

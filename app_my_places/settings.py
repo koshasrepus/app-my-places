@@ -133,9 +133,8 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 #-------> TELEGRAM
-#TELEGRAM_TOKEN = '1505162116:AAFMJ7ED4hkTkR1kY42lNRhUUvc2MpBZhYY'
 
-TELEGRAM_TOKEN = bool(os.getenv('TELEGRAM_TOKEN'))
+TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
 
 django_heroku.settings(locals())
 

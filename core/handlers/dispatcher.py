@@ -81,7 +81,6 @@ def hand_ste_add_photo(message):
     user.save()
     bot.send_message(chat_id=message.chat.id, text='Фотография добавлена')
 
-
 @bot.message_handler(commands=['list'])
 def hand_list_message(message):
     user = get_user(message)

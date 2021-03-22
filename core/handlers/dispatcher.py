@@ -88,7 +88,8 @@ def hand_list_message(message):
 
 @bot.message_handler(commands=['reset'])
 def hand_reset_message(message):
-    bot.send_message(chat_id=message.chat.id, text='command [reset] is works')
+    Palaces.objects.all().delete()
+    bot.send_message(chat_id=message.chat.id, text='Все сохраненные успешно места удалены! Можно создавать завново!')
 
 
 @bot.message_handler(content_types=['location'])

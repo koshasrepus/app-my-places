@@ -84,6 +84,7 @@ def hand_ste_add_photo(message):
 
 @bot.message_handler(commands=['list'])
 def hand_list_message(message):
+    user = get_user(message)
     bot.send_message(chat_id=message.chat.id, text='command [list] is works')
 
 @bot.message_handler(commands=['reset'])

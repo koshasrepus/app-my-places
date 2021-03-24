@@ -11,5 +11,5 @@ class Places(models.Model):
     title = models.CharField(max_length=100, default=None)
     place_lat = models.FloatField(null=True)
     place_lon = models.FloatField(null=True)
-    image = models.ImageField()
+    image = models.CharField(max_length=98, default=None)
     user = models.ForeignKey('User', on_delete=models.CASCADE)

@@ -86,7 +86,7 @@ def hand_ste_add_photo(message):
 
     photo_info = bot.get_file(photo_id)
 
-    photo = requests.get('https://api.ghhhhhhhhhhhgtfffffftelegram.org/file/bot{0}/{1}'.format(TELEGRAM_TOKEN, photo_info.file_path)).content
+    photo = requests.get('https://api.telegram.org/file/bot{0}/{1}'.format(TELEGRAM_TOKEN, photo_info.file_path)).content
 
     bot.send_message(chat_id=message.chat.id, text='Фотография добавлена')
 

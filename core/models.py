@@ -6,7 +6,7 @@ class User(models.Model):
     step = models.IntegerField()
 
 
-class Palaces(models.Model):
+class Places(models.Model):
     """Места"""
     title = models.CharField(max_length=100, default=None)
     place_lat = models.FloatField(null=True)

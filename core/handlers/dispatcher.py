@@ -1,6 +1,8 @@
 import telebot
+import requests
+
 from app_my_places.settings import TELEGRAM_TOKEN, DEBUG
-from core.models import User, Palaces
+from core.models import User, Places
 
 bot = telebot.TeleBot(TELEGRAM_TOKEN)
 
@@ -50,7 +52,7 @@ def check_step_1(message):
 @bot.message_handler(func=check_step_1)
 def hand_step_add_title_place(message):
     user = get_user(message)
-    Palaces.objects.create(title=message.text, user=user)
+    Places.objects.create(title=message.text, user=user)
     user.step = 2
     user.save()
     bot.send_message(chat_id=message.chat.id, text='Отправьте локацию. Для этого нажмите Прикрепить > Геопозиция')
@@ -63,7 +65,7 @@ def check_step_2(message):
 def hand_step_add_location(message):
     user = get_user(message)
     #places = Palaces.objects.get(user=user, place_lat=None)
-    places = Palaces.objects.filter(user=user, place_lat=None)[1]
+    places = Places.objects.filter(user=user, place_lat=None)[1]
     places.place_lat = message.location.latitude
     places.place_lon = message.location.longitude
     user.step = 3
@@ -77,9 +79,18 @@ def check_step_3(message):
 @bot.message_handler(content_types=['photo'])
 def hand_ste_add_photo(message):
     user = get_user(message)
-    user.step = 1
+    #user.step = 1
     user.save()
+
+    photo_id = message.photo[2].file_id
+
+    photo_info = bot.get_file(photo_id)
+
+    photo = requests.get('https://api.ghhhhhhhhhhhgtfffffftelegram.org/file/bot{0}/{1}'.format(TELEGRAM_TOKEN, photo_info.file_path)).content
+
     bot.send_message(chat_id=message.chat.id, text='Фотография добавлена')
+
+    bot.send_photo(chat_id=message.chat.id, photo=photo)
 
 @bot.message_handler(commands=['list'])
 def hand_list_message(message):
@@ -88,7 +99,7 @@ def hand_list_message(message):
 
 @bot.message_handler(commands=['reset'])
 def hand_reset_message(message):
-    Palaces.objects.all().delete()
+    Places.objects.all().delete()
     bot.send_message(chat_id=message.chat.id, text='Все сохраненные успешно места удалены! Можно создавать завново!')
 
 

@@ -9,11 +9,6 @@ https://docs.djangoproject.com/en/2.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.0/ref/settings/
 """
-import django
-django.setup()
-
-from core.models import User, Places
-
 import os
 import django_heroku
 import dj_database_url
@@ -28,8 +23,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-#SECRET_KEY = os.getenv('SECRET_KEY')
-SECRET_KEY = '^+8xdwk=i0a0&u9nhvbmjf#(%y(pj3xud@+&i1kcud6^ifkvjtr'
+SECRET_KEY = os.getenv('SECRET_KEY')
+#SECRET_KEY = '^+8xdwk=i0a0&u9nhvbmjf#(%y(pj3xud@+&i1kcud6^ifkvjtr'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(os.getenv('DEBUG', True))
@@ -81,7 +76,7 @@ WSGI_APPLICATION = 'app_my_places.wsgi.application'
 
 
 # Database
-# https://docs.djangoproject.com/en/2.0/ref/settings/#databases
+# https://docs.djangoproject.com/en/2.0/ref/settTELEGRAM_TOKEN = '1505162116:AAEPs7eS8U27lfj_KzpST-0eJmnozrNpBEw'ings/#databases
 
 if DEBUG:
 
@@ -141,6 +136,7 @@ STATIC_URL = '/static/'
 #-------> TELEGRAM
 
 TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
+
 
 django_heroku.settings(locals())
 

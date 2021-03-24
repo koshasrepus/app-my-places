@@ -68,6 +68,7 @@ def hand_step_add_location(message):
     places = Places.objects.filter(user=user, place_lat=None)[1]
     places.place_lat = message.location.latitude
     places.place_lon = message.location.longitude
+    places.save()
     user.step = 3
     user.save()
     bot.send_message(chat_id=message.chat.id, text='Отправьте фотографию места')
@@ -79,22 +80,43 @@ def check_step_3(message):
 @bot.message_handler(content_types=['photo'])
 def hand_ste_add_photo(message):
     user = get_user(message)
-    #user.step = 1
-    user.save()
 
     photo_id = message.photo[2].file_id
 
-    photo_info = bot.get_file(photo_id)
+    place = Places.objects.filter(user=user, image=None)[1]
 
-    photo = requests.get('https://api.telegram.org/file/bot{0}/{1}'.format(TELEGRAM_TOKEN, photo_info.file_path)).content
+    place.image = photo_id
+    place.save()
+
+    user.step = 1
+    user.save()
 
     bot.send_message(chat_id=message.chat.id, text='Фотография добавлена')
 
-    bot.send_photo(chat_id=message.chat.id, photo=photo)
 
 @bot.message_handler(commands=['list'])
 def hand_list_message(message):
     user = get_user(message)
+
+    places = Places.objects.filter(user=user)
+
+    if not places:
+        bot.send_message(chat_id=message.chat.id, text='Список пока пуст')
+        return
+
+    for place in places:
+        title = place.title
+        photo_id = place.image
+
+        photo_info = bot.get_file(photo_id)
+        photo = requests.get('https://api.telegram.org/file/bot{0}/{1}'.format(TELEGRAM_TOKEN, photo_info.file_path)).content
+        bot.send_photo(chat_id=message.chat.id, photo=photo, caption=title)
+
+        place_lat = place.place_lat
+        place_lon = place.place_lon
+
+        bot.send_location(chat_id=message.chat.id, latitude=place_lat, longitude=place_lon)
+
     bot.send_message(chat_id=message.chat.id, text='command [list] is works')
 
 @bot.message_handler(commands=['reset'])

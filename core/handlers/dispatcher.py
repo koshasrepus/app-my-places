@@ -1,7 +1,7 @@
 import telebot
 import requests
 
-from app_my_places.settings import TELEGRAM_TOKEN, DEBUG
+from app_my_places.settings import TELEGRAM_TOKEN, DEBUG, GOOGLE_MAPS_KEY
 from core.models import User, Places
 
 bot = telebot.TeleBot(TELEGRAM_TOKEN)
@@ -49,23 +49,15 @@ def check_step(message, step):
 def check_step_1(message):
     return check_step(message, 1)
 
-@bot.message_handler(func=check_step_1)
-def hand_step_add_title_place(message):
-    user = get_user(message)
-    Places.objects.create(title=message.text, user=user)
-    user.step = 2
-    user.save()
-    bot.send_message(chat_id=message.chat.id, text='Отправьте локацию. Для этого нажмите Прикрепить > Геопозиция')
 
 def check_step_2(message):
- return check_step(message, 2)
+    return check_step(message, 2)
 
-@bot.message_handler(func=check_step_2)
-@bot.message_handler(content_types=['location'])
+@bot.message_handler( func=check_step_2, content_types=['location'])
 def hand_step_add_location(message):
     user = get_user(message)
     #places = Palaces.objects.get(user=user, place_lat=None)
-    places = Places.objects.filter(user=user, place_lat=None)[1]
+    places = Places.objects.filter(user=user, place_lat=None)[0]
     places.place_lat = message.location.latitude
     places.place_lon = message.location.longitude
     places.save()
@@ -76,14 +68,13 @@ def hand_step_add_location(message):
 def check_step_3(message):
     return check_step(message, 3)
 
-@bot.message_handler(func=check_step_3)
-@bot.message_handler(content_types=['photo'])
+@bot.message_handler(func=check_step_3, content_types=['photo'])
 def hand_ste_add_photo(message):
     user = get_user(message)
 
     photo_id = message.photo[2].file_id
 
-    place = Places.objects.filter(user=user, image=None)[1]
+    place = Places.objects.filter(user=user, image=None)[0]
 
     place.image = photo_id
     place.save()
@@ -92,7 +83,6 @@ def hand_ste_add_photo(message):
     user.save()
 
     bot.send_message(chat_id=message.chat.id, text='Фотография добавлена')
-
 
 @bot.message_handler(commands=['list'])
 def hand_list_message(message):
@@ -117,18 +107,38 @@ def hand_list_message(message):
 
         bot.send_location(chat_id=message.chat.id, latitude=place_lat, longitude=place_lon)
 
-    bot.send_message(chat_id=message.chat.id, text='command [list] is works')
-
 @bot.message_handler(commands=['reset'])
 def hand_reset_message(message):
+    user = get_user(message)
+    user.step = 1
+    user.save()
     Places.objects.all().delete()
     bot.send_message(chat_id=message.chat.id, text='Все сохраненные успешно места удалены! Можно создавать завново!')
+
+@bot.message_handler(func=check_step_1)
+def hand_step_add_title_place(message):
+    user = get_user(message)
+    Places.objects.create(title=message.text, user=user)
+    user.step = 2
+    user.save()
+    bot.send_message(chat_id=message.chat.id, text='Отправьте локацию. Для этого нажмите Прикрепить > Геопозиция')
 
 
 @bot.message_handler(content_types=['location'])
 def hand_location(message):
-    bot.send_message(chat_id=message.chat.id, text='command [location] is works')
+    user = get_user(message)
+    url = f'https://maps.googleapis.com/maps/api/distancematrix/json?origins={message.location.latitude},{message.location.longitude}&destinations='
+    places = Places.objects.filter(user=user)
 
+    k = 0
+    for place in places:
+        dest = f'{place.place_lat}%{place.place_lat}' if k == 0 else f'%7C{place.place_lat}%2C{place.place_lon}'
+        url += dest
+    url += F'&key={GOOGLE_MAPS_KEY}'
+
+    response = requests.get(url=url).json()
+
+    bot.send_message(chat_id=message.chat.id, text='command [location] is works')
 
 def process_telegram_event(update_json):
     update = telebot.types.Update.de_json(update_json)

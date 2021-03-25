@@ -1,5 +1,6 @@
 import telebot
 import requests
+import math
 
 from app_my_places.settings import TELEGRAM_TOKEN, DEBUG
 from core.models import User, Places
@@ -129,11 +130,33 @@ def hand_location(message):
     user = get_user(message)
     places = Places.objects.filter(user=user)
 
-    k = 0
-    for place in places:
-        pass
+    start_place_lat = message.location.latitude
+    start_place_lon = message.location.longitude
 
-    bot.send_message(chat_id=message.chat.id, text='command [location] is works')
+    for place in places:
+        place_lat = place.place_lat
+        place_lon = place.place_lon
+
+        r = 6_400
+        a = abs(start_place_lat - place_lat) * 111.16
+        b = abs(start_place_lon - place_lon) * 111.3 * math.cos(place_lat)
+        distance = r * math.sqrt((a/r)**2 + (b/r)**2)
+
+        distance = distance * 1000
+
+        if distance > 500:
+            continue
+
+        # Отправка фото
+        title = place.title
+        photo_id = place.image
+
+        photo_info = bot.get_file(photo_id)
+        photo = requests.get('https://api.telegram.org/file/bot{0}/{1}'.format(TELEGRAM_TOKEN, photo_info.file_path)).content
+        bot.send_photo(chat_id=message.chat.id, photo=photo, caption=title)
+
+        #Отправка координат
+        bot.send_location(chat_id=message.chat.id, latitude=place_lat, longitude=place_lon)
 
 def process_telegram_event(update_json):
     update = telebot.types.Update.de_json(update_json)

@@ -1,7 +1,7 @@
 import telebot
 import requests
 
-from app_my_places.settings import TELEGRAM_TOKEN, DEBUG, GOOGLE_MAPS_KEY
+from app_my_places.settings import TELEGRAM_TOKEN, DEBUG
 from core.models import User, Places
 
 bot = telebot.TeleBot(TELEGRAM_TOKEN)
@@ -127,16 +127,11 @@ def hand_step_add_title_place(message):
 @bot.message_handler(content_types=['location'])
 def hand_location(message):
     user = get_user(message)
-    url = f'https://maps.googleapis.com/maps/api/distancematrix/json?origins={message.location.latitude},{message.location.longitude}&destinations='
     places = Places.objects.filter(user=user)
 
     k = 0
     for place in places:
-        dest = f'{place.place_lat}%{place.place_lat}' if k == 0 else f'%7C{place.place_lat}%2C{place.place_lon}'
-        url += dest
-    url += F'&key={GOOGLE_MAPS_KEY}'
-
-    response = requests.get(url=url).json()
+        pass
 
     bot.send_message(chat_id=message.chat.id, text='command [location] is works')
 

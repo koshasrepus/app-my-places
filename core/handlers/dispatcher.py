@@ -27,7 +27,7 @@ def hand_start_messate(message):
     user = user.get() if user else User.objects.create(chat_id=message.chat.id, step=1)
 
     if user.step == 1:
-        bot.send_message(chat_id=message.chat.id, text='Введите название для новго места')
+        bot.send_message(chat_id=message.chat.id, text='Введите название для нового места')
     elif user.step == 2:
         bot.send_message(chat_id=message.chat.id, text='Отправьте локацию. Для этого нажмите Прикрепить > Геопозиция')
     elif user.step == 3:
